@@ -23,7 +23,6 @@
             margin: 0;
             padding: 0;
             line-height: 1.6;
-            -webkit-text-size-adjust: 100%; /* Prevents text scaling on orientation change */
         }
         header {
             background-color: var(--surface-color);
@@ -31,7 +30,7 @@
             text-align: center;
             border-bottom: 1px solid var(--border);
         }
-        h1 { color: var(--primary); margin: 0; font-size: 2.5rem; line-height: 1.2; }
+        h1 { color: var(--primary); margin: 0; font-size: 2.5rem; }
         p.subtitle { color: var(--text-muted); font-size: 1.1rem; margin-top: 10px; }
         
         .container {
@@ -58,8 +57,6 @@
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s ease;
-            flex: 1 1 auto; /* Allows buttons to grow and fill space evenly on mobile */
-            text-align: center;
         }
         .tab-btn.active, .tab-btn:hover {
             background-color: var(--primary);
@@ -73,8 +70,7 @@
         /* Commands Grid */
         .cmd-grid {
             display: grid;
-            /* Changed to auto-fit and reduced min-width for better mobile scaling */
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
         }
         .cmd-card {
@@ -83,7 +79,6 @@
             border-radius: 10px;
             padding: 20px;
             border-left: 5px solid var(--accent);
-            word-wrap: break-word;
         }
         .cmd-title {
             font-family: monospace;
@@ -91,7 +86,6 @@
             color: var(--accent);
             margin-bottom: 10px;
             font-weight: bold;
-            word-break: break-all; /* Prevents long commands from breaking the container */
         }
         .cmd-desc { font-weight: bold; margin-bottom: 10px; }
         .cmd-detail { color: var(--text-muted); font-size: 0.95rem; }
@@ -112,7 +106,6 @@
             border-radius: 20px;
             cursor: pointer;
             transition: 0.2s;
-            font-size: 0.95rem;
         }
         .qa-filter-btn.active, .qa-filter-btn:hover {
             background: var(--primary);
@@ -136,17 +129,16 @@
             margin-bottom: 15px;
             font-weight: bold;
         }
-        .qa-q { font-size: 1.15rem; font-weight: bold; margin-bottom: 15px; line-height: 1.4; }
+        .qa-q { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
         .qa-toggle {
             background-color: #293548;
             color: var(--text-main);
             border: none;
-            padding: 10px 18px; /* Slightly larger for easier tapping */
+            padding: 8px 16px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
             margin-bottom: 15px;
-            font-size: 0.95rem;
         }
         .qa-toggle:hover { background-color: #334155; }
         .qa-a {
@@ -165,16 +157,14 @@
             border-radius: 10px;
             padding: 30px;
             margin-bottom: 30px;
-            overflow-wrap: break-word;
         }
         .scenario-title {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             color: var(--warning);
             margin-top: 0;
             margin-bottom: 15px;
             border-bottom: 1px solid var(--border);
             padding-bottom: 10px;
-            line-height: 1.4;
         }
         .scenario-section {
             margin-bottom: 20px;
@@ -193,9 +183,6 @@
             border-radius: 6px;
             margin-top: 10px;
             border: 1px solid #1f2937;
-            overflow-x: auto; /* Allows horizontal scrolling for long code lines on mobile */
-            white-space: pre-wrap; /* Keeps formatting but wraps text */
-            word-break: break-word;
         }
         .takeaway-block {
             background-color: rgba(16, 185, 129, 0.1);
@@ -212,45 +199,6 @@
             padding: 2px 6px;
             border-radius: 4px;
             font-family: monospace;
-            word-break: break-word;
-        }
-
-        /* Mobile Media Queries */
-        @media (max-width: 768px) {
-            header {
-                padding: 30px 15px;
-            }
-            h1 {
-                font-size: 1.8rem;
-            }
-            p.subtitle {
-                font-size: 1rem;
-            }
-            .container {
-                margin: 20px auto;
-                padding: 0 15px;
-            }
-            .tabs {
-                flex-direction: column; /* Stack tabs vertically on small screens */
-                gap: 10px;
-                margin-bottom: 25px;
-            }
-            .tab-btn {
-                width: 100%;
-                padding: 14px;
-            }
-            .cmd-grid {
-                grid-template-columns: 1fr; /* Single column for commands */
-            }
-            .qa-card, .scenario-card, .cmd-card {
-                padding: 18px; /* Slightly less padding to save screen real estate */
-            }
-            .scenario-title {
-                font-size: 1.2rem;
-            }
-            ul {
-                padding-left: 20px; /* Reduce indent on mobile lists */
-            }
         }
     </style>
 </head>
@@ -487,9 +435,9 @@
         {
             "level": "Level 6 &rarr; 7: Global Searches and Taming Errors",
             "goal": "Search the entire server for a specific file owned by a specific user, while ignoring permission errors.",
-            "cmd": "find / -user bandit7 -group bandit6 -size 33c 2&gt;/dev/null",
+            "cmd": "find / -user bandit7 -group bandit6 -size 33c 2>/dev/null",
             "reason": "<ul><li><b>/ (Root):</b> Starting at / tells find to start at the absolute top of the server's hard drive and search everything.</li><li><b>-user bandit7 -group bandit6 -size 33c:</b> These are your filters. You are looking for a file owned by that specific user, assigned to that group, exactly 33 bytes big.</li><li><b>2&gt;/dev/null (The Magic Trick):</b> Because you are searching the whole server, find will try to look inside system folders you don't have permission to view. Normally, this spits out hundreds of 'Permission Denied' lines. In Linux, <code>1</code> is the output you want, and <code>2</code> is the error messages. <code>&gt;</code> means redirect. <code>/dev/null</code> is a black hole. So, <code>2&gt;/dev/null</code> means: 'Take all the error messages and throw them in the trash, so my screen only shows the actual file I am looking for.'</li></ul>",
-            "takeaway": "Mastering 2&gt;/dev/null is a core troubleshooting skill. It allows you to run aggressive, system-wide diagnostics without your terminal becoming unreadable due to access warnings."
+            "takeaway": "Mastering 2>/dev/null is a core troubleshooting skill. It allows you to run aggressive, system-wide diagnostics without your terminal becoming unreadable due to access warnings."
         }
     ];
 
@@ -538,4 +486,58 @@
         if(category === 'All') {
             renderQA(qaData);
         } else {
-            renderQA(qaData.filter(item
+            renderQA(qaData.filter(item => item.cat === category));
+        }
+    }
+
+    function toggleAnswer(btn) {
+        const answer = btn.nextElementSibling;
+        if (answer.classList.contains('show')) {
+            answer.classList.remove('show');
+            btn.textContent = 'Show Answer';
+        } else {
+            answer.classList.add('show');
+            btn.textContent = 'Hide Answer';
+        }
+    }
+
+    // Render Scenarios
+    const scenariosContainer = document.getElementById('scenarios-container');
+    scenariosData.forEach(s => {
+        scenariosContainer.innerHTML += `
+            <div class="scenario-card">
+                <h2 class="scenario-title">${s.level}</h2>
+                <div class="scenario-section">
+                    <div class="scenario-label">The Goal:</div>
+                    <div>${s.goal}</div>
+                </div>
+                <div class="scenario-section">
+                    <div class="scenario-label">The Command:</div>
+                    <div class="terminal-block">${s.cmd}</div>
+                </div>
+                <div class="scenario-section">
+                    <div class="scenario-label">The Reason Behind It:</div>
+                    <div>${s.reason}</div>
+                </div>
+                <div class="takeaway-block">
+                    <b>Takeaway:</b> ${s.takeaway}
+                </div>
+            </div>
+        `;
+    });
+
+    // Tab Switching Logic
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        event.target.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    // Initialize Initial Views
+    renderQA(qaData);
+</script>
+
+</body>
+</html>
